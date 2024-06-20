@@ -6,6 +6,7 @@ import {
   Put,
   Param,
   Body,
+  ParseIntPipe,
 } from '@nestjs/common';
 
 // import services
@@ -17,14 +18,16 @@ import { UpdateUserDto } from './dtos/UpdateUserDto';
 import { ResponseDto } from 'src/global/dtos/response.dto';
 import { UserDataDto } from './dtos/userData.dto';
 
+// import validation pipe
+import { UserDtoValidationPipe } from './pipes/UserDtoValidation.pipe';
+
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    const userId = Number(id);
-    return this.usersService.findUser(userId);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.findUser(id);
   }
 
   @Get()
@@ -34,20 +37,21 @@ export class UsersController {
 
   @Post()
   async create(
-    @Body() createUserDto: CreateUserDto,
+    @Body(UserDtoValidationPipe) createUserDto: CreateUserDto,
   ): Promise<ResponseDto<{ user: UserDataDto }>> {
     return await this.usersService.createUser(createUserDto);
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    const userId = Number(id);
-    return this.usersService.updateUser(userId, updateUserDto);
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body(UserDtoValidationPipe) updateUserDto: UpdateUserDto,
+  ) {
+    return this.usersService.updateUser(id, updateUserDto);
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: string) {
-    const userId = Number(id);
-    return this.usersService.deleteUser(userId);
+  async delete(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.deleteUser(id);
   }
 }
