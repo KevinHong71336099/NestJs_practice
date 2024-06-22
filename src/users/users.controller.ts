@@ -26,13 +26,15 @@ export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number) {
+  async findOne(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<ResponseDto<{ user: UserDataDto | null }>> {
     return this.usersService.findUser(id);
   }
 
   @Get()
-  async findAll() {
-    return this.usersService.findAllUsers();
+  async findAll(): Promise<ResponseDto<{ users: UserDataDto[] }>> {
+    return await this.usersService.findAllUsers();
   }
 
   @Post()
@@ -46,12 +48,14 @@ export class UsersController {
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body(UserDtoValidationPipe) updateUserDto: UpdateUserDto,
-  ) {
+  ): Promise<ResponseDto<{ user: UserDataDto }>> {
     return this.usersService.updateUser(id, updateUserDto);
   }
 
   @Delete(':id')
-  async delete(@Param('id', ParseIntPipe) id: number) {
+  async delete(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<ResponseDto<{ user: UserDataDto }>> {
     return this.usersService.deleteUser(id);
   }
 }

@@ -1,6 +1,7 @@
 import {
   Injectable,
   BadRequestException,
+  NotFoundException,
   InternalServerErrorException,
   HttpStatus,
 } from '@nestjs/common';
@@ -34,14 +35,26 @@ export class UsersService {
     private sanitizeDataService: SanitizeDataService,
   ) {}
 
-  async findAllUsers(): Promise<User[]> {
-    const allUser = await this.usersRepository.find();
-    return allUser;
+  async findAllUsers(): Promise<ResponseDto<{ users: UserDataDto[] }>> {
+    const allUsers = await this.usersRepository.find({
+      select: ['id', 'name', 'email'],
+    });
+    return new ResponseDto('成功搜尋所有使用者', HttpStatus.OK, {
+      users: allUsers,
+    });
   }
 
-  async findUser(id: number): Promise<User | null> {
+  async findUser(id: number): Promise<ResponseDto<{ user: UserDataDto }>> {
     const user = await this.usersRepository.findOneBy({ id });
-    return user;
+
+    // 未找到該使用者
+    if (!user) {
+      throw new NotFoundException('找不到該使用者');
+    }
+
+    return new ResponseDto(`成功搜尋 ID:${user?.id} 使用者`, HttpStatus.OK, {
+      user: this.sanitizeDataService.sanitizeUserData(user),
+    });
   }
 
   async createUser(
@@ -90,19 +103,45 @@ export class UsersService {
   async updateUser(
     id: number,
     updateUserDto: UpdateUserDto,
-  ): Promise<User | null> {
-    const updatedUserInfo: updatedInfo = {
-      ...updateUserDto,
-    };
+  ): Promise<ResponseDto<{ user: UserDataDto }>> {
+    // 驗證密碼是否通過
+    if (
+      !this.confirmFormService.isPasswordValid(
+        updateUserDto.password,
+        updateUserDto.confirmPassword,
+      )
+    ) {
+      throw new BadRequestException('請確認密碼是否填寫正確');
+    }
+
+    const updatedUserInfo: updatedInfo = { ...updateUserDto };
     delete updatedUserInfo.confirmPassword;
+
     await this.usersRepository.update(id, updatedUserInfo);
     const updatedUser = await this.usersRepository.findOneBy({ id });
-    return updatedUser;
+
+    if (!updatedUser) {
+      throw new NotFoundException('找不到該使用者');
+    }
+
+    return new ResponseDto(
+      `成功更新 ID:${updatedUser?.id} 使用者`,
+      HttpStatus.OK,
+      { user: this.sanitizeDataService.sanitizeUserData(updatedUser) },
+    );
   }
 
-  async deleteUser(id: number): Promise<User | null> {
+  async deleteUser(id: number): Promise<ResponseDto<{ user: UserDataDto }>> {
     const deletedUser = await this.usersRepository.findOneBy({ id });
+    if (!deletedUser) {
+      throw new NotFoundException('找不到該使用者');
+    }
+
     await this.usersRepository.delete(id);
-    return deletedUser;
+    return new ResponseDto(
+      `成功刪除 ID: ${deletedUser.id} 使用者`,
+      HttpStatus.OK,
+      { user: this.sanitizeDataService.sanitizeUserData(deletedUser) },
+    );
   }
 }
