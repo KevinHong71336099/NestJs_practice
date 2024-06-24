@@ -27,6 +27,7 @@ export class AuthService {
 
     // 排除敏感資訊
     if (await this.encryptService.isPasswordCorrect(pwd, user.password)) {
+      console.log(123);
       const { password, ...result } = user;
       return result;
     }
