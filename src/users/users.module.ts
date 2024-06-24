@@ -9,6 +9,13 @@ import { SanitizeDataService } from './services/sanitizeData.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User])],
+  exports: [
+    UsersService,
+    ComfirmFormService,
+    EncryptService,
+    SanitizeDataService,
+    TypeOrmModule,
+  ],
   controllers: [UsersController],
   providers: [
     UsersService,

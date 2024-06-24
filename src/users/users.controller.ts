@@ -7,6 +7,7 @@ import {
   Param,
   Body,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 
 // import services
@@ -21,10 +22,14 @@ import { UserDataDto } from './dtos/userData.dto';
 // import validation pipe
 import { UserDtoValidationPipe } from './pipes/UserDtoValidation.pipe';
 
+// import jwt guard
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async findOne(
     @Param('id', ParseIntPipe) id: number,

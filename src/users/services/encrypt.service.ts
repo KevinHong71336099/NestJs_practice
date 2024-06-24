@@ -10,4 +10,11 @@ export class EncryptService {
     const encryptedPwd = await bcrypt.hash(password, saltRounds);
     return encryptedPwd;
   }
+
+  async isPasswordCorrect(
+    plainPassword: string,
+    passwordHash: string,
+  ): Promise<boolean> {
+    return await bcrypt.compare(plainPassword, passwordHash);
+  }
 }

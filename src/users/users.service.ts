@@ -144,4 +144,8 @@ export class UsersService {
       { user: this.sanitizeDataService.sanitizeUserData(deletedUser) },
     );
   }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return await this.usersRepository.findOneBy({ email });
+  }
 }
