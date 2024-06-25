@@ -19,9 +19,6 @@ import { UpdateUserDto } from './dtos/UpdateUserDto';
 import { ResponseDto } from 'src/global/dtos/response.dto';
 import { UserDataDto } from './dtos/userData.dto';
 
-// import validation pipe
-import { UserDtoValidationPipe } from './pipes/UserDtoValidation.pipe';
-
 // import jwt guard
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
@@ -44,7 +41,7 @@ export class UsersController {
 
   @Post()
   async create(
-    @Body(UserDtoValidationPipe) createUserDto: CreateUserDto,
+    @Body() createUserDto: CreateUserDto,
   ): Promise<ResponseDto<{ user: UserDataDto }>> {
     return await this.usersService.createUser(createUserDto);
   }
@@ -52,7 +49,7 @@ export class UsersController {
   @Put(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,
-    @Body(UserDtoValidationPipe) updateUserDto: UpdateUserDto,
+    @Body() updateUserDto: UpdateUserDto,
   ): Promise<ResponseDto<{ user: UserDataDto }>> {
     return this.usersService.updateUser(id, updateUserDto);
   }
