@@ -9,7 +9,6 @@ import { CreateUserDto } from '../dtos/CreateUserDto';
 
 // import user entity
 import { User } from '../entities/user.entity';
-import { EncryptService } from './encrypt.service';
 
 // 設定每個模式需要驗證的欄位
 const confirmTypes = {
@@ -20,7 +19,6 @@ const confirmTypes = {
 export class ComfirmFormService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
-    encryptService: EncryptService,
   ) {}
 
   isCreateUserDtoValid(createUserDto: CreateUserDto): boolean {
@@ -35,7 +33,7 @@ export class ComfirmFormService {
 
   isPasswordValid(password: string, confirmPassword: string): boolean {
     // 檢驗密碼驗證是否相同
-    return password === confirmPassword ? true : false;
+    return password === confirmPassword;
   }
 
   async isRegisteredEmail(email: string): Promise<boolean> {
