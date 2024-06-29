@@ -2,16 +2,33 @@ import { Module, ValidationPipe } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import databaseConfig from './config/database.config';
+import redisConfig from './config/redis.config';
 import { UsersModule } from './users/users.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { APP_PIPE } from '@nestjs/core';
+import type { RedisClientOptions } from 'redis';
+import { redisStore } from 'cache-manager-redis-store';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [databaseConfig],
+      load: [databaseConfig, redisConfig],
+    }),
+    CacheModule.registerAsync<RedisClientOptions>({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        store: (): any =>
+          redisStore({
+            socket: {
+              host: configService.get<string>('REDIS_HOST'),
+              port: configService.get<number>('REDIS_PORT'),
+            },
+          }),
+      }),
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],

@@ -27,7 +27,6 @@ export class AuthService {
 
     // 排除敏感資訊
     if (await this.encryptService.isPasswordCorrect(pwd, user.password)) {
-      console.log(123);
       const { password, ...result } = user;
       return result;
     }
@@ -40,5 +39,9 @@ export class AuthService {
     return new ResponseDto('使用者登入成功', HttpStatus.OK, {
       accessToken: this.jwtService.sign(payload),
     });
+  }
+
+  logout(): ResponseDto<[]> {
+    return new ResponseDto('使用者成功登出', HttpStatus.OK, []);
   }
 }
