@@ -1,15 +1,36 @@
-import { Module } from '@nestjs/common';
+import { Module, ValidationPipe } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import databaseConfig from './config/database.config';
+import redisConfig from './config/redis.config';
 import { UsersModule } from './users/users.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
+import { APP_GUARD, APP_PIPE } from '@nestjs/core';
+import type { RedisClientOptions } from 'redis';
+import { redisStore } from 'cache-manager-redis-store';
+import { CacheModule } from '@nestjs/cache-manager';
+import { JwtRevokeGuard } from './auth/guards/jwtRevoke.guard';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [databaseConfig],
+      load: [databaseConfig, redisConfig],
+    }),
+    CacheModule.registerAsync<RedisClientOptions>({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        store: (): any =>
+          redisStore({
+            socket: {
+              host: configService.get<string>('REDIS_HOST'),
+              port: configService.get<number>('REDIS_PORT'),
+            },
+          }),
+      }),
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -25,9 +46,15 @@ import { AppService } from './app.service';
         autoLoadEntities: true,
       }),
     }),
+    AuthModule,
     UsersModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    { provide: APP_PIPE, useClass: ValidationPipe },
+    { provide: APP_GUARD, useClass: JwtAuthGuard },
+    { provide: APP_GUARD, useClass: JwtRevokeGuard },
+  ],
 })
 export class AppModule {}
