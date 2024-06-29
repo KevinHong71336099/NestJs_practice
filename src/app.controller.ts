@@ -13,6 +13,7 @@ import { UserDataDto } from './users/dtos/userData.dto';
 import { ResponseDto } from './global/dtos/response.dto';
 import { JwtRevokeInterceptor } from './auth/interceptors/jwtRevoke.interceptor';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { JwtRevokeGuard } from './auth/guards/jwtRevoke.guard';
 
 @Controller()
 export class AppController {

@@ -7,10 +7,11 @@ import { UsersModule } from './users/users.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { APP_PIPE } from '@nestjs/core';
+import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import type { RedisClientOptions } from 'redis';
 import { redisStore } from 'cache-manager-redis-store';
 import { CacheModule } from '@nestjs/cache-manager';
+import { JwtRevokeGuard } from './auth/guards/jwtRevoke.guard';
 
 @Module({
   imports: [
@@ -48,6 +49,10 @@ import { CacheModule } from '@nestjs/cache-manager';
     UsersModule,
   ],
   controllers: [AppController],
-  providers: [AppService, { provide: APP_PIPE, useClass: ValidationPipe }],
+  providers: [
+    AppService,
+    { provide: APP_PIPE, useClass: ValidationPipe },
+    { provide: APP_GUARD, useClass: JwtRevokeGuard },
+  ],
 })
 export class AppModule {}
