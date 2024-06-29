@@ -19,14 +19,10 @@ import { UpdateUserDto } from './dtos/UpdateUserDto';
 import { ResponseDto } from 'src/global/dtos/response.dto';
 import { UserDataDto } from './dtos/userData.dto';
 
-// import jwt guard
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async findOne(
     @Param('id', ParseIntPipe) id: number,

@@ -12,6 +12,7 @@ import type { RedisClientOptions } from 'redis';
 import { redisStore } from 'cache-manager-redis-store';
 import { CacheModule } from '@nestjs/cache-manager';
 import { JwtRevokeGuard } from './auth/guards/jwtRevoke.guard';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { JwtRevokeGuard } from './auth/guards/jwtRevoke.guard';
   providers: [
     AppService,
     { provide: APP_PIPE, useClass: ValidationPipe },
+    { provide: APP_GUARD, useClass: JwtAuthGuard },
     { provide: APP_GUARD, useClass: JwtRevokeGuard },
   ],
 })
