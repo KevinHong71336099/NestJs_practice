@@ -59,14 +59,16 @@ export class UsersService {
   }
 
   async findUserByQuery(query: FindUserQuery): Promise<User[]> {
+    const orderField =
+      query.orderBy === 'createdAt' ? 'createdAt' : 'updatedAt';
+
     return this.usersRepository.find({
       where: [
         { name: ILike(`%${query?.name}%`) },
         { email: ILike(`%${query?.name}%`) },
       ],
       order: {
-        createdAt: `${query.orderBy.split(':')[1]}` as FindOptionsOrderValue,
-        updatedAt: `${query.orderBy.split(':')[1]}` as FindOptionsOrderValue,
+        [orderField]: `${query.orderBy.split(':')[1]}` as FindOptionsOrderValue,
       },
       skip: (query.page - 1) * query.limit,
       take: query.limit,
