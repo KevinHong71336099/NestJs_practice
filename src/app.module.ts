@@ -13,6 +13,7 @@ import { redisStore } from 'cache-manager-redis-store';
 import { CacheModule } from '@nestjs/cache-manager';
 import { JwtRevokeGuard } from './auth/guards/jwtRevoke.guard';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
     }),
     AuthModule,
     UsersModule,
+    ProductsModule,
   ],
   controllers: [AppController],
   providers: [
