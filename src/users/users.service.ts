@@ -8,7 +8,7 @@ import {
 
 // import typeORM's repository
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOptionsOrderValue, ILike, Repository } from 'typeorm';
 
 // import entities
 import { User } from './entities/user.entity';
@@ -19,6 +19,7 @@ import { UpdateUserDto } from './dtos/UpdateUserDto';
 import { updatedInfo } from './interfaces/updatedInfo.interface';
 import { ResponseDto } from 'src/global/dtos/response.dto';
 import { UserDataDto } from './dtos/userData.dto';
+import { FindUserQuery } from './dtos/findUserQuery.dto';
 
 // import services
 import { ComfirmFormService } from './services/confirmUserForm.service';
@@ -54,6 +55,21 @@ export class UsersService {
 
     return new ResponseDto(`成功搜尋 ID:${user?.id} 使用者`, HttpStatus.OK, {
       user: this.sanitizeDataService.sanitizeUserData(user),
+    });
+  }
+
+  async findUserByQuery(query: FindUserQuery): Promise<User[]> {
+    return this.usersRepository.find({
+      where: [
+        { name: ILike(`%${query?.name}%`) },
+        { email: ILike(`%${query?.name}%`) },
+      ],
+      order: {
+        createdAt: `${query.orderBy.split(':')[1]}` as FindOptionsOrderValue,
+        updatedAt: `${query.orderBy.split(':')[1]}` as FindOptionsOrderValue,
+      },
+      skip: (query.page - 1) * query.limit,
+      take: query.limit,
     });
   }
 
