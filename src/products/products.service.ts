@@ -78,4 +78,13 @@ export class ProductsService {
       throw new InternalServerErrorException('更新商品失敗')
     }
   }
+
+  async deleteProduct(id: string): Promise<Product> {
+    const deletedProduct = await this.productRepository.findOneBy({ id })
+    if (!deletedProduct) {
+      throw new NotFoundException('找不到該商品');
+    }
+    await this.productRepository.delete(id)
+    return deletedProduct
+  }
 }
