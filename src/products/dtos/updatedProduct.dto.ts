@@ -8,6 +8,7 @@ export class UpdatedProductDto {
 
   @IsString({ message: '姓名欄位必須是字串' })
   @IsNotEmpty({ message: '姓名欄位不能為空' })
+  @IsProductNameAlreadyExist()
   name: string;
 
   @IsNumber()
