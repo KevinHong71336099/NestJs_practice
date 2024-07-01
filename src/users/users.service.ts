@@ -34,7 +34,7 @@ export class UsersService {
     private confirmFormService: ComfirmFormService,
     private encryptService: EncryptService,
     private sanitizeDataService: SanitizeDataService,
-  ) { }
+  ) {}
 
   async findAllUsers(): Promise<ResponseDto<{ users: UserDataDto[] }>> {
     const allUsers = await this.usersRepository.find({

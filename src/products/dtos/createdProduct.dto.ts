@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString, IsPositive } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsPositive,
+} from 'class-validator';
 import { IsProductNameAlreadyExist } from '../validator/productName.validator';
 
 export class CreatedProductDto {

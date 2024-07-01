@@ -11,11 +11,11 @@ import { ProductsService } from '../products.service';
 @ValidatorConstraint({ async: true })
 @Injectable()
 export class IsProductNameExistConstraint
-  implements ValidatorConstraintInterface {
-  constructor(private productsService: ProductsService) { }
+  implements ValidatorConstraintInterface
+{
+  constructor(private productsService: ProductsService) {}
 
   async validate(name: string, args: ValidationArguments) {
-
     // 獲取dto中id欄位
     const productId: string | undefined = (args.object as any).id;
 
@@ -24,7 +24,7 @@ export class IsProductNameExistConstraint
 
     // updateDto驗證: 檢查更新是否存在於database
     if (productId) {
-      return !product || product.id === productId
+      return !product || product.id === productId;
     }
 
     // createdDto驗證
