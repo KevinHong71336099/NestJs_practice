@@ -14,6 +14,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { JwtRevokeGuard } from './auth/guards/jwtRevoke.guard';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { ProductsModule } from './products/products.module';
+import { RolesGuard } from './global/guards/roles.guard';
 
 @Module({
   imports: [
@@ -57,6 +58,7 @@ import { ProductsModule } from './products/products.module';
     { provide: APP_PIPE, useClass: ValidationPipe },
     { provide: APP_GUARD, useClass: JwtAuthGuard },
     { provide: APP_GUARD, useClass: JwtRevokeGuard },
+    { provide: APP_GUARD, useClass: RolesGuard },
   ],
 })
 export class AppModule {}

@@ -22,6 +22,7 @@ import { UpdateUserDto } from './dtos/UpdateUserDto';
 import { ResponseDto } from 'src/global/dtos/response.dto';
 import { UserDataDto } from './dtos/userData.dto';
 import { FindUserQuery } from './dtos/findUserQuery.dto';
+import { Roles } from 'src/global/decorators/roles.decorators';
 
 @Controller('users')
 export class UsersController {
@@ -35,13 +36,14 @@ export class UsersController {
   }
 
   @Get()
-  async findUserByQuery(@Query() query: FindUserQuery): Promise<User[]> {
-    return await this.usersService.findUserByQuery(query);
+  @Roles(['admin'])
+  async findAll(): Promise<ResponseDto<{ users: UserDataDto[] }>> {
+    return await this.usersService.findAllUsers();
   }
 
   @Get()
-  async findAll(): Promise<ResponseDto<{ users: UserDataDto[] }>> {
-    return await this.usersService.findAllUsers();
+  async findUserByQuery(@Query() query: FindUserQuery): Promise<User[]> {
+    return await this.usersService.findUserByQuery(query);
   }
 
   @Post()

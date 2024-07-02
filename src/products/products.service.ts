@@ -6,15 +6,8 @@ import {
 import { CreatedProductDto } from './dtos/createdProduct.dto';
 import { Product } from './entities/product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  Between,
-  FindOptionsOrderValue,
-  ILike,
-  MoreThan,
-  Repository,
-} from 'typeorm';
+import { Between, FindOptionsOrderValue, ILike, Repository } from 'typeorm';
 import { UpdatedProductDto } from './dtos/updatedProduct.dto';
-import { NotFoundError } from 'rxjs';
 import { FindProductQuery } from './dtos/findProductQuery.dto';
 
 @Injectable()

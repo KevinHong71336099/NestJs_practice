@@ -35,7 +35,12 @@ export class AuthService {
   }
 
   async login(user: UserDataDto): Promise<ResponseDto<AccessToken>> {
-    const payload = { username: user?.name, sub: user?.id, email: user?.email };
+    const payload = {
+      username: user?.name,
+      sub: user?.id,
+      email: user?.email,
+      role: user?.role,
+    };
     return new ResponseDto('使用者登入成功', HttpStatus.OK, {
       accessToken: this.jwtService.sign(payload),
     });
