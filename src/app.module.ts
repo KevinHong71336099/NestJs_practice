@@ -15,6 +15,7 @@ import { JwtRevokeGuard } from './auth/guards/jwtRevoke.guard';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { ProductsModule } from './products/products.module';
 import { RolesGuard } from './global/guards/roles.guard';
+import { GuestModule } from './guest/guest.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { RolesGuard } from './global/guards/roles.guard';
     AuthModule,
     UsersModule,
     ProductsModule,
+    GuestModule
   ],
   controllers: [AppController],
   providers: [
