@@ -1,7 +1,9 @@
+import { LineItem } from 'src/orders/entities/lineItem.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -34,4 +36,8 @@ export class Product {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  // Relations
+  @OneToMany(() => LineItem, (lineItem) => lineItem.product)
+  public lineItems: LineItem[]
 }
