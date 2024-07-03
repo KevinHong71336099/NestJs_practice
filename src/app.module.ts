@@ -22,6 +22,7 @@ import { RolesGuard } from './global/guards/roles.guard';
       load: [databaseConfig, redisConfig],
     }),
     CacheModule.registerAsync<RedisClientOptions>({
+      isGlobal: true,
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
@@ -61,4 +62,4 @@ import { RolesGuard } from './global/guards/roles.guard';
     { provide: APP_GUARD, useClass: RolesGuard },
   ],
 })
-export class AppModule {}
+export class AppModule { }

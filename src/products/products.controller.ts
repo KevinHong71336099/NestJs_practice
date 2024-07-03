@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 
@@ -17,12 +18,14 @@ import { Product } from './entities/product.entity';
 import { CreatedProductDto } from './dtos/createdProduct.dto';
 import { UpdatedProductDto } from './dtos/updatedProduct.dto';
 import { FindProductQuery } from './dtos/findProductQuery.dto';
+import { Request } from 'express';
+import { UserDataDto } from 'src/users/dtos/userData.dto';
 
 @Controller('/products')
 export class ProductsController {
-  constructor(private productsService: ProductsService) {}
+  constructor(private productsService: ProductsService) { }
 
-  @Get('id')
+  @Get(':id')
   async findProductById(@Param('id') id: string): Promise<Product> {
     return await this.productsService.findProductById(id);
   }
@@ -41,6 +44,12 @@ export class ProductsController {
     return await this.productsService.createProduct(createdProductDto);
   }
 
+  @Post(':id/addToCart')
+  async addProductToCart(@Param('id') id: string, @Req() req: Request): Promise<string> {
+    const user = req.user as UserDataDto
+    return await this.productsService.addToCart(user.id, id)
+  }
+
   @Put(':id')
   async updateProduct(
     @Param('id') id: string,
@@ -52,5 +61,11 @@ export class ProductsController {
   @Delete(':id')
   async deleteProduct(@Param('id') id: string): Promise<Product> {
     return await this.productsService.deleteProduct(id);
+  }
+
+  @Delete(':id/deleteFromCart')
+  async deleteProductFromCart(@Param('id') id: string, @Req() req: Request): Promise<string> {
+    const user = req.user as UserDataDto
+    return await this.productsService.deleteFromCart(user.id, id)
   }
 }

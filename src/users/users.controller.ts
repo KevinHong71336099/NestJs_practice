@@ -26,11 +26,11 @@ import { Roles } from 'src/global/decorators/roles.decorators';
 
 @Controller('users')
 export class UsersController {
-  constructor(private usersService: UsersService) {}
+  constructor(private usersService: UsersService) { }
 
   @Get(':id')
   async findOne(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: string,
   ): Promise<ResponseDto<{ user: UserDataDto | null }>> {
     return this.usersService.findUser(id);
   }
@@ -55,7 +55,7 @@ export class UsersController {
 
   @Put(':id')
   async update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<ResponseDto<{ user: UserDataDto }>> {
     return this.usersService.updateUser(id, updateUserDto);
@@ -63,7 +63,7 @@ export class UsersController {
 
   @Delete(':id')
   async delete(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: string,
   ): Promise<ResponseDto<{ user: UserDataDto }>> {
     return this.usersService.deleteUser(id);
   }

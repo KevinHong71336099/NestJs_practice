@@ -12,7 +12,7 @@ import { UnauthorizedException } from '@nestjs/common';
 
 @Injectable()
 export class JwtRevokeInterceptor implements NestInterceptor {
-  constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
+  constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) { }
   intercept(
     context: ExecutionContext,
     next: CallHandler,

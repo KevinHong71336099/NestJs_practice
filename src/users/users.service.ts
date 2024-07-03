@@ -34,7 +34,7 @@ export class UsersService {
     private confirmFormService: ComfirmFormService,
     private encryptService: EncryptService,
     private sanitizeDataService: SanitizeDataService,
-  ) {}
+  ) { }
 
   async findAllUsers(): Promise<ResponseDto<{ users: UserDataDto[] }>> {
     const allUsers = await this.usersRepository.find({
@@ -45,7 +45,7 @@ export class UsersService {
     });
   }
 
-  async findUser(id: number): Promise<ResponseDto<{ user: UserDataDto }>> {
+  async findUser(id: string): Promise<ResponseDto<{ user: UserDataDto }>> {
     const user = await this.usersRepository.findOneBy({ id });
 
     // 未找到該使用者
@@ -119,7 +119,7 @@ export class UsersService {
   }
 
   async updateUser(
-    id: number,
+    id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<ResponseDto<{ user: UserDataDto }>> {
     // 驗證密碼是否通過
@@ -149,7 +149,7 @@ export class UsersService {
     );
   }
 
-  async deleteUser(id: number): Promise<ResponseDto<{ user: UserDataDto }>> {
+  async deleteUser(id: string): Promise<ResponseDto<{ user: UserDataDto }>> {
     const deletedUser = await this.usersRepository.findOneBy({ id });
     if (!deletedUser) {
       throw new NotFoundException('找不到該使用者');
