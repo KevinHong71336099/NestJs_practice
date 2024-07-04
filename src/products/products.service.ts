@@ -18,7 +18,7 @@ export class ProductsService {
   constructor(
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     @InjectRepository(Product) private productRepository: Repository<Product>,
-  ) { }
+  ) {}
 
   async findProductByName(name: string): Promise<Product | null> {
     try {
@@ -96,57 +96,54 @@ export class ProductsService {
     return deletedProduct;
   }
 
-
   async addToCart(userId: string, productId: string): Promise<string> {
     try {
-      const key = 'cart:'.concat(userId)
-      const productIds: string | undefined = await this.cacheManager.get(key)
+      const key = 'cart:'.concat(userId);
+      const productIds: string | undefined = await this.cacheManager.get(key);
 
       if (productIds) {
         // 已建立的情況
-        const newProductIds = productIds.split(',').push(productId).toString()
-        await this.cacheManager.set(userId, newProductIds, 3600)
+        const newProductIds = productIds.split(',').push(productId).toString();
+        await this.cacheManager.set(userId, newProductIds, 3600);
       } else {
         // 尚未建立
-        await this.cacheManager.set(userId, productId, 3600)
+        await this.cacheManager.set(userId, productId, 3600);
       }
 
-      return `商品 id: ${[productId]} 成功加入購物車`
-
+      return `商品 id: ${[productId]} 成功加入購物車`;
     } catch (err) {
-      throw new InternalServerErrorException('購物車加入商品失敗，請再次嘗試')
+      throw new InternalServerErrorException('購物車加入商品失敗，請再次嘗試');
     }
   }
 
   async deleteFromCart(userId: string, productId: string): Promise<string> {
     try {
-      const key = 'cart:'.concat(userId)
-      const productIds: string | undefined = await this.cacheManager.get(key)
+      const key = 'cart:'.concat(userId);
+      const productIds: string | undefined = await this.cacheManager.get(key);
 
       if (productIds) {
         // 已建立的情況
-        const idArr = productIds.split(',')
-        const productIdx = idArr.indexOf(productId)
+        const idArr = productIds.split(',');
+        const productIdx = idArr.indexOf(productId);
 
         // 若 id 不存在
         if (!productIdx) {
-          throw new NotFoundException(`商品 id: ${productId}不存在於購物車中`)
+          throw new NotFoundException(`商品 id: ${productId}不存在於購物車中`);
         }
 
         // 刪除該商品
-        idArr.splice(productIdx, 1)
+        idArr.splice(productIdx, 1);
 
         // 更新購物車商品id
-        await this.cacheManager.set(userId, idArr.toString(), 3600)
+        await this.cacheManager.set(userId, idArr.toString(), 3600);
       } else {
         // 購物車為空
-        return '購物車是空的，趕快去物色商品吧'
+        return '購物車是空的，趕快去物色商品吧';
       }
 
-      return '商品 id: ${[productId]} 成功從購物車移除'
+      return '商品 id: ${[productId]} 成功從購物車移除';
     } catch (err) {
-      throw new InternalServerErrorException('購物車刪除商品失敗，請再次嘗試')
+      throw new InternalServerErrorException('購物車刪除商品失敗，請再次嘗試');
     }
   }
-
 }
