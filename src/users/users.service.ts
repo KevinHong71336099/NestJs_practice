@@ -45,7 +45,7 @@ export class UsersService {
     });
   }
 
-  async findUser(id: string): Promise<ResponseDto<{ user: UserDataDto }>> {
+  async findUserById(id: string): Promise<User | null> {
     const user = await this.usersRepository.findOneBy({ id });
 
     // 未找到該使用者
@@ -53,9 +53,7 @@ export class UsersService {
       throw new NotFoundException('找不到該使用者');
     }
 
-    return new ResponseDto(`成功搜尋 ID:${user?.id} 使用者`, HttpStatus.OK, {
-      user: this.sanitizeDataService.sanitizeUserData(user),
-    });
+    return user;
   }
 
   async findUserByQuery(query: FindUserQuery): Promise<User[]> {

@@ -31,8 +31,8 @@ export class UsersController {
   @Get(':id')
   async findOne(
     @Param('id') id: string,
-  ): Promise<ResponseDto<{ user: UserDataDto | null }>> {
-    return this.usersService.findUser(id);
+  ): Promise<User | null> {
+    return this.usersService.findUserById(id);
   }
 
   @Get()
