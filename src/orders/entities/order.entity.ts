@@ -31,10 +31,10 @@ export class Order {
   updatedAt: Date;
 
   // Relations
-  @ManyToOne(() => User, (user) => user.adminOrders, { cascade: true })
+  @ManyToOne(() => User, (user) => user.adminOrders)
   admin: User;
 
-  @ManyToOne(() => User, (user) => user.guestOrders, { cascade: true })
+  @ManyToOne(() => User, (user) => user.guestOrders)
   guest: User;
 
   @OneToMany(() => LineItem, (lineItem) => lineItem.order, { cascade: true })

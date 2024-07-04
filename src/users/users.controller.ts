@@ -26,24 +26,22 @@ import { Roles } from 'src/global/decorators/roles.decorators';
 
 @Controller('users')
 export class UsersController {
-  constructor(private usersService: UsersService) { }
+  constructor(private usersService: UsersService) {}
 
   @Get(':id')
-  async findOne(
-    @Param('id') id: string,
-  ): Promise<User | null> {
+  async findOne(@Param('id') id: string): Promise<User | null> {
     return this.usersService.findUserById(id);
+  }
+
+  @Get()
+  async findUserByQuery(@Query() query: FindUserQuery): Promise<User[]> {
+    return await this.usersService.findUserByQuery(query);
   }
 
   @Get()
   @Roles(['admin'])
   async findAll(): Promise<ResponseDto<{ users: UserDataDto[] }>> {
     return await this.usersService.findAllUsers();
-  }
-
-  @Get()
-  async findUserByQuery(@Query() query: FindUserQuery): Promise<User[]> {
-    return await this.usersService.findUserByQuery(query);
   }
 
   @Post()

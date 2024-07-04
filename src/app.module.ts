@@ -16,6 +16,7 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { ProductsModule } from './products/products.module';
 import { RolesGuard } from './global/guards/roles.guard';
 import { GuestModule } from './guest/guest.module';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -53,7 +54,8 @@ import { GuestModule } from './guest/guest.module';
     AuthModule,
     UsersModule,
     ProductsModule,
-    GuestModule
+    GuestModule,
+    OrdersModule,
   ],
   controllers: [AppController],
   providers: [
@@ -64,4 +66,4 @@ import { GuestModule } from './guest/guest.module';
     { provide: APP_GUARD, useClass: RolesGuard },
   ],
 })
-export class AppModule { }
+export class AppModule {}
