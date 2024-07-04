@@ -4,6 +4,7 @@ import { CreateOrderDto } from './dtos/createOrder.dto';
 import { OrdersService } from './orders.service';
 import { Request } from 'express';
 import { UpdateUserDto } from 'src/users/dtos/UpdateUserDto';
+import { UpdateOrderDto } from './dtos/updateOrder.dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -19,7 +20,7 @@ export class OrdersController {
 
   @Put(':id')
   async updateOrder(
-    @Body() updateOrderDto: UpdateUserDto,
+    @Body() updateOrderDto: UpdateOrderDto,
     @Param('id') orderId: string,
     @Req() req: Request | any,
   ): Promise<Order> {
