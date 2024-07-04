@@ -34,7 +34,7 @@ export class UsersService {
     private confirmFormService: ComfirmFormService,
     private encryptService: EncryptService,
     private sanitizeDataService: SanitizeDataService,
-  ) { }
+  ) {}
 
   async findAllUsers(): Promise<ResponseDto<{ users: UserDataDto[] }>> {
     const allUsers = await this.usersRepository.find({
@@ -61,10 +61,10 @@ export class UsersService {
       query.orderBy === 'createdAt' ? 'createdAt' : 'updatedAt';
 
     return await this.usersRepository.find({
-      where: [
-        { name: ILike(`%${query?.name}%`) },
-        { email: ILike(`%${query?.name}%`) },
-      ],
+      where: {
+        name: ILike(`%${query.name}%`),
+        email: ILike(`%${query.email}%`),
+      },
       order: {
         [orderField]: `${query.orderBy.split(':')[1]}` as FindOptionsOrderValue,
       },
