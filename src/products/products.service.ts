@@ -12,6 +12,7 @@ import { UpdatedProductDto } from './dtos/updatedProduct.dto';
 import { FindProductQuery } from './dtos/findProductQuery.dto';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { ProductInfo } from 'src/orders/dtos/productInfo.dto';
 
 @Injectable()
 export class ProductsService {
@@ -96,19 +97,30 @@ export class ProductsService {
     return deletedProduct;
   }
 
-  async addToCart(userId: string, productId: string): Promise<string> {
+  async addToCart(
+    userId: string,
+    productId: string,
+    stockQuantity: number,
+  ): Promise<string> {
     try {
-      const key = 'cart:'.concat(userId);
-      const productIds: string | undefined = await this.cacheManager.get(key);
+      // 設定新增購物車商品資訊
+      const newProductInfo: ProductInfo = { productId, stockQuantity };
 
-      if (productIds) {
-        // 已建立的情況
-        const newProductIds = productIds.split(',').push(productId).toString();
-        await this.cacheManager.set(userId, newProductIds, 3600);
-      } else {
-        // 尚未建立
-        await this.cacheManager.set(userId, productId, 3600);
+      // 建立redis key
+      const key = 'cart:'.concat(userId);
+
+      // 宣告商品資訊暫存
+      let productInfos: ProductInfo[] = [];
+      let productInfosJson: string | undefined =
+        await this.cacheManager.get(key);
+
+      if (productInfosJson) {
+        // 已建立的情況則將新增項目加入
+        productInfos = JSON.parse(productInfosJson);
       }
+
+      productInfosJson = JSON.stringify(productInfos.push(newProductInfo));
+      await this.cacheManager.set(key, productInfosJson, 3600);
 
       return `商品 id: ${[productId]} 成功加入購物車`;
     } catch (err) {
@@ -118,27 +130,28 @@ export class ProductsService {
 
   async deleteFromCart(userId: string, productId: string): Promise<string> {
     try {
+      // 建立redis key
       const key = 'cart:'.concat(userId);
-      const productIds: string | undefined = await this.cacheManager.get(key);
+      const productInfosJson: string | undefined =
+        await this.cacheManager.get(key);
 
-      if (productIds) {
+      if (productInfosJson) {
         // 已建立的情況
-        const idArr = productIds.split(',');
-        const productIdx = idArr.indexOf(productId);
+        const productInfos: ProductInfo[] = JSON.parse(productInfosJson);
+        const findIdx = productInfos.findIndex(
+          (productInfo) => productInfo.productId === productId,
+        );
 
         // 若 id 不存在
-        if (!productIdx) {
+        if (!findIdx) {
           throw new NotFoundException(`商品 id: ${productId}不存在於購物車中`);
         }
 
         // 刪除該商品
-        idArr.splice(productIdx, 1);
+        productInfos.splice(findIdx, 1);
 
         // 更新購物車商品id
-        await this.cacheManager.set(userId, idArr.toString(), 3600);
-      } else {
-        // 購物車為空
-        return '購物車是空的，趕快去物色商品吧';
+        await this.cacheManager.set(key, JSON.stringify(productInfos), 3600);
       }
 
       return '商品 id: ${[productId]} 成功從購物車移除';
