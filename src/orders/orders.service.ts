@@ -25,7 +25,11 @@ export class OrdersService {
     private productsService: ProductsService,
   ) {}
 
-  async findOrderByQuery(query: FindOrderQuery): Promise<Order[]> {
+  async findOrderByQuery(
+    query: FindOrderQuery,
+    roleId: string,
+    role: string,
+  ): Promise<Order[]> {
     try {
       // 設定搜尋排序
       const orderBy = query.orderBy.split(':')[0];
@@ -48,18 +52,35 @@ export class OrdersService {
         take: query.limit,
       };
 
+      // role為guest則限定只能搜尋該用戶的orders
+      if (role === 'guest') {
+        conditions.where.guest = { id: roleId };
+      }
+
       return await this.orderRepository.find(conditions);
     } catch (err) {
       throw new InternalServerErrorException('搜尋訂單失敗');
     }
   }
 
-  async findOrderById(id: string): Promise<Order> {
+  async findOrderById(
+    id: string,
+    roleId: string,
+    role: string,
+  ): Promise<Order> {
     // 搜尋訂單相關聯的商品資訊
-    const order = await this.orderRepository.findOne({
+
+    const conditions: any = {
       where: { id },
       relations: { lineItems: { product: true } },
-    });
+    };
+
+    // role為guest則限定只能搜尋該用戶的orders
+    if (role === 'guest') {
+      conditions.where.guest = { id: roleId };
+    }
+
+    const order = await this.orderRepository.findOne(conditions);
     if (!order) {
       throw new NotFoundException(`找不到 id: ${id} 的 訂單`);
     }

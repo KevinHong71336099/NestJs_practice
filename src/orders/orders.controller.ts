@@ -21,13 +21,27 @@ export class OrdersController {
   constructor(private ordersService: OrdersService) {}
 
   @Get(':id')
-  async findOrderById(@Param('id') id: string): Promise<Order> {
-    return await this.ordersService.findOrderById(id);
+  async findOrderById(
+    @Param('id') id: string,
+    @Req() req: Request | any,
+  ): Promise<Order> {
+    return await this.ordersService.findOrderById(
+      id,
+      req.user.id,
+      req.user.role,
+    );
   }
 
   @Get()
-  async findOrderByQuery(@Query() query: FindOrderQuery): Promise<Order[]> {
-    return await this.ordersService.findOrderByQuery(query);
+  async findOrderByQuery(
+    @Query() query: FindOrderQuery,
+    @Req() req: Request | any,
+  ): Promise<Order[]> {
+    return await this.ordersService.findOrderByQuery(
+      query,
+      req.user.id,
+      req.user.role,
+    );
   }
 
   @Post()
@@ -35,7 +49,11 @@ export class OrdersController {
     @Body() createOrderDto: CreateOrderDto,
     @Req() req: Request | any,
   ): Promise<Order> {
-    return await this.ordersService.createOrder(createOrderDto, req.user.id);
+    return await this.ordersService.createOrder(
+      createOrderDto,
+      req.user.id,
+      req.user.role,
+    );
   }
 
   @Put(':id')
