@@ -68,14 +68,19 @@ export class OrdersService {
 
   async createOrder(
     createOrderDto: CreateOrderDto,
-    adminId: string,
+    roleId: string,
+    role: string,
   ): Promise<Order> {
     const productInfos: ProductInfo[] = JSON.parse(createOrderDto.productInfos);
 
-    // 尋找 admin 與 guest instance
+    // 根據 role 設定 adminId 和 guestId
+    const adminId = role === 'admin' ? roleId : createOrderDto.userId;
+    const guestId = role === 'admin' ? createOrderDto.userId : roleId;
+
+    // 查詢 admin 和 guest
     const [admin, guest] = await Promise.all([
       this.usersService.findUserById(adminId),
-      this.usersService.findUserById(createOrderDto.userId),
+      this.usersService.findUserById(guestId),
     ]);
 
     if (!admin) {
@@ -83,9 +88,7 @@ export class OrdersService {
     }
 
     if (!guest) {
-      throw new NotFoundException(
-        `找不到 id: ${createOrderDto.userId} 的guest`,
-      );
+      throw new NotFoundException(`找不到 id: ${guestId} 的guest`);
     }
 
     // 建立order instance
