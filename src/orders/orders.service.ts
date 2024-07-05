@@ -56,6 +56,7 @@ export class OrdersService {
       if (role === 'guest') {
         conditions.where.guest = { id: roleId };
       }
+      console.log('test');
 
       return await this.orderRepository.find(conditions);
     } catch (err) {
@@ -72,7 +73,7 @@ export class OrdersService {
 
     const conditions: any = {
       where: { id },
-      relations: { lineItems: { product: true } },
+      relations: ['admin', 'lineItems'],
     };
 
     // role為guest則限定只能搜尋該用戶的orders

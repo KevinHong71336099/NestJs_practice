@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -24,6 +25,12 @@ export class Order {
   @Column()
   note: string;
 
+  @Column()
+  adminId: string;
+
+  @Column()
+  guestId: string;
+
   @CreateDateColumn()
   createdAt: Date;
 
@@ -32,9 +39,11 @@ export class Order {
 
   // Relations
   @ManyToOne(() => User, (user) => user.adminOrders)
+  @JoinColumn({ name: 'adminId' })
   admin: User;
 
   @ManyToOne(() => User, (user) => user.guestOrders)
+  @JoinColumn({ name: 'guestId' })
   guest: User;
 
   @OneToMany(() => LineItem, (lineItem) => lineItem.order, { cascade: true })
