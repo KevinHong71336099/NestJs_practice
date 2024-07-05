@@ -223,4 +223,13 @@ export class OrdersService {
     // 保存order
     return await this.orderRepository.save(order);
   }
+
+  async deleteOrder(id: string): Promise<Order> {
+    const order = await this.orderRepository.findOneBy({ id });
+    if (!order) {
+      throw new NotFoundException('找不到該訂單');
+    }
+    await this.orderRepository.delete(id);
+    return order;
+  }
 }

@@ -7,6 +7,7 @@ import {
   Get,
   Req,
   Query,
+  Delete,
 } from '@nestjs/common';
 import { Order } from './entities/order.entity';
 import { CreateOrderDto } from './dtos/createOrder.dto';
@@ -48,5 +49,10 @@ export class OrdersController {
       req.user.id,
       orderId,
     );
+  }
+
+  @Delete(':id')
+  async deleteOrder(@Param('id') id: string): Promise<Order> {
+    return await this.ordersService.deleteOrder(id);
   }
 }
