@@ -31,35 +31,44 @@ export class OrdersService {
     role: string,
   ): Promise<Order[]> {
     try {
-      // 設定搜尋排序
       const orderBy = query.orderBy.split(':')[0];
+      const orderDirection = query.orderBy.split(':')[1];
 
-      // 設定搜尋條件
-      const conditions: any = {
-        relations: {
-          admin: true,
-          guest: true,
-        },
-        where: {
-          id: ILike(`%${query.orderId}%`),
+      const queryBuilder = this.orderRepository
+        .createQueryBuilder('order')
+        .leftJoinAndSelect('order.admin', 'admin')
+        .leftJoinAndSelect('order.guest', 'guest')
+        .where('CAST(order.id AS TEXT) ILIKE :orderId', {
+          orderId: `%${query.orderId}%`,
+        });
+
+      if (query.financialStatus) {
+        queryBuilder.andWhere('order.financialStatus = :financialStatus', {
           financialStatus: query.financialStatus,
-          fulfillStatus: query.fulfillmentStatus,
-        },
-        order: {
-          [orderBy]: `${query.orderBy.split(':')[1]}` as FindOptionsOrderValue,
-        },
-        skip: (query.page - 1) * query.limit,
-        take: query.limit,
-      };
-
-      // role為guest則限定只能搜尋該用戶的orders
-      if (role === 'guest') {
-        conditions.where.guest = { id: roleId };
+        });
       }
-      console.log('test');
 
-      return await this.orderRepository.find(conditions);
+      if (query.fulfillmentStatus) {
+        queryBuilder.andWhere('order.fulfillStatus = :fulfillmentStatus', {
+          fulfillStatus: query.fulfillmentStatus,
+        });
+      }
+
+      queryBuilder
+        .orderBy(
+          `order.${orderBy}`,
+          orderDirection.toUpperCase() as 'ASC' | 'DESC',
+        )
+        .skip((query.page - 1) * query.limit)
+        .take(query.limit);
+
+      if (role === 'guest') {
+        queryBuilder.andWhere('guest.id = :roleId', { roleId });
+      }
+
+      return await queryBuilder.getMany();
     } catch (err) {
+      console.error('Error in findOrderByQuery:', err.message, err.stack);
       throw new InternalServerErrorException('搜尋訂單失敗');
     }
   }

@@ -38,32 +38,31 @@ export class ProductsService {
   }
 
   async findProductByQuery(query: FindProductQuery): Promise<Product[]> {
-    // 設定搜尋排序
     const orderBy = query.orderBy.split(':')[0];
+    const orderDirection = query.orderBy.split(':')[1];
 
-    // 判斷否需要設定Price查詢條件
-    const isSetPriceCondition = query.priceGreatThan || query.priceGreatThan;
+    const queryBuilder = this.productRepository
+      .createQueryBuilder('product')
+      .where('product.name ILIKE :name', { name: `%${query.name}%` })
+      .orderBy(
+        `product.${orderBy}`,
+        orderDirection.toUpperCase() as 'ASC' | 'DESC',
+      )
+      .skip((query.page - 1) * query.limit)
+      .take(query.limit);
 
-    // 設定搜尋條件
-    const conditions: any = {
-      where: [{ name: ILike(`%${query.name}%`) }],
-      order: {
-        [orderBy]: `${query.orderBy.split(':')[1]}` as FindOptionsOrderValue,
-      },
-      skip: (query.page - 1) * query.limit,
-      take: query.limit,
-    };
+    const isSetPriceCondition = query.priceGreatThan || query.priceLessThan;
 
     if (isSetPriceCondition) {
-      // 設定價格搜尋區間
       const priceGreatThan = query.priceGreatThan || 1;
       const priceLessThan = query.priceLessThan || Number.MAX_SAFE_INTEGER;
-      conditions.where.push({
-        sellPrice: Between(priceGreatThan, priceLessThan),
-      });
+      queryBuilder.andWhere(
+        'product.sellPrice BETWEEN :priceGreatThan AND :priceLessThan',
+        { priceGreatThan, priceLessThan },
+      );
     }
 
-    return this.productRepository.find(conditions);
+    return await queryBuilder.getMany();
   }
 
   async createProduct(createdProductDto: CreatedProductDto): Promise<Product> {
