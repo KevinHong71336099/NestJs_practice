@@ -8,7 +8,7 @@ import {
 
 // import typeORM's repository
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOptionsOrderValue, ILike, Repository } from 'typeorm';
 
 // import entities
 import { User } from './entities/user.entity';
@@ -19,6 +19,7 @@ import { UpdateUserDto } from './dtos/UpdateUserDto';
 import { updatedInfo } from './interfaces/updatedInfo.interface';
 import { ResponseDto } from 'src/global/dtos/response.dto';
 import { UserDataDto } from './dtos/userData.dto';
+import { FindUserQuery } from './dtos/findUserQuery.dto';
 
 // import services
 import { ComfirmFormService } from './services/confirmUserForm.service';
@@ -44,7 +45,7 @@ export class UsersService {
     });
   }
 
-  async findUser(id: number): Promise<ResponseDto<{ user: UserDataDto }>> {
+  async findUserById(id: string): Promise<User | null> {
     const user = await this.usersRepository.findOneBy({ id });
 
     // 未找到該使用者
@@ -52,8 +53,23 @@ export class UsersService {
       throw new NotFoundException('找不到該使用者');
     }
 
-    return new ResponseDto(`成功搜尋 ID:${user?.id} 使用者`, HttpStatus.OK, {
-      user: this.sanitizeDataService.sanitizeUserData(user),
+    return user;
+  }
+
+  async findUserByQuery(query: FindUserQuery): Promise<User[]> {
+    const orderField =
+      query.orderBy === 'createdAt' ? 'createdAt' : 'updatedAt';
+
+    return await this.usersRepository.find({
+      where: {
+        name: ILike(`%${query.name}%`),
+        email: ILike(`%${query.email}%`),
+      },
+      order: {
+        [orderField]: `${query.orderBy.split(':')[1]}` as FindOptionsOrderValue,
+      },
+      skip: (query.page - 1) * query.limit,
+      take: query.limit,
     });
   }
 
@@ -101,7 +117,7 @@ export class UsersService {
   }
 
   async updateUser(
-    id: number,
+    id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<ResponseDto<{ user: UserDataDto }>> {
     // 驗證密碼是否通過
@@ -131,7 +147,7 @@ export class UsersService {
     );
   }
 
-  async deleteUser(id: number): Promise<ResponseDto<{ user: UserDataDto }>> {
+  async deleteUser(id: string): Promise<ResponseDto<{ user: UserDataDto }>> {
     const deletedUser = await this.usersRepository.findOneBy({ id });
     if (!deletedUser) {
       throw new NotFoundException('找不到該使用者');

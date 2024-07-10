@@ -7,30 +7,39 @@ import {
   Param,
   Body,
   ParseIntPipe,
-  UseGuards,
+  Query,
 } from '@nestjs/common';
 
 // import services
 import { UsersService } from './users.service';
+
+// import entities
+import { User } from './entities/user.entity';
 
 // import DTO
 import { CreateUserDto } from './dtos/CreateUserDto';
 import { UpdateUserDto } from './dtos/UpdateUserDto';
 import { ResponseDto } from 'src/global/dtos/response.dto';
 import { UserDataDto } from './dtos/userData.dto';
+import { FindUserQuery } from './dtos/findUserQuery.dto';
+import { Roles } from 'src/global/decorators/roles.decorators';
 
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Get(':id')
-  async findOne(
-    @Param('id', ParseIntPipe) id: number,
-  ): Promise<ResponseDto<{ user: UserDataDto | null }>> {
-    return this.usersService.findUser(id);
+  async findOne(@Param('id') id: string): Promise<User | null> {
+    return this.usersService.findUserById(id);
   }
 
   @Get()
+  async findUserByQuery(@Query() query: FindUserQuery): Promise<User[]> {
+    return await this.usersService.findUserByQuery(query);
+  }
+
+  @Get()
+  @Roles(['admin'])
   async findAll(): Promise<ResponseDto<{ users: UserDataDto[] }>> {
     return await this.usersService.findAllUsers();
   }
@@ -44,7 +53,7 @@ export class UsersController {
 
   @Put(':id')
   async update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<ResponseDto<{ user: UserDataDto }>> {
     return this.usersService.updateUser(id, updateUserDto);
@@ -52,7 +61,7 @@ export class UsersController {
 
   @Delete(':id')
   async delete(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: string,
   ): Promise<ResponseDto<{ user: UserDataDto }>> {
     return this.usersService.deleteUser(id);
   }

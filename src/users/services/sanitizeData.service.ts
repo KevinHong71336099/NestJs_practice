@@ -5,7 +5,7 @@ import { UserDataDto } from '../dtos/userData.dto';
 @Injectable()
 export class SanitizeDataService {
   sanitizeUserData(user: User): UserDataDto {
-    const { id, name, email } = user;
-    return { id, name, email };
+    const { id, name, email, role } = user;
+    return { id, name, email, role };
   }
 }
