@@ -38,6 +38,6 @@ export class Product {
   updatedAt: Date;
 
   // Relations
-  @OneToMany(() => LineItem, (lineItem) => lineItem.product)
-  public lineItems: LineItem[]
+  @OneToMany(() => LineItem, (lineItem) => lineItem.product, { cascade: true })
+  public lineItems: LineItem[];
 }
