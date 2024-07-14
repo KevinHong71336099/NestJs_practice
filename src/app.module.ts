@@ -1,4 +1,10 @@
-import { Module, ValidationPipe } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+  ValidationPipe,
+} from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import databaseConfig from './config/database.config';
@@ -17,6 +23,7 @@ import { ProductsModule } from './products/products.module';
 import { RolesGuard } from './global/guards/roles.guard';
 import { GuestModule } from './guest/guest.module';
 import { OrdersModule } from './orders/orders.module';
+import { LoggerMiddleware } from './global/middlewares/logger.middleware';
 
 @Module({
   imports: [
@@ -66,4 +73,11 @@ import { OrdersModule } from './orders/orders.module';
     { provide: APP_GUARD, useClass: RolesGuard },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoggerMiddleware)
+      .exclude({ path: 'auth/login', method: RequestMethod.ALL })
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
+  }
+}
