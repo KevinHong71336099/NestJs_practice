@@ -1,4 +1,4 @@
-import { Order } from 'src/orders/entities/order.entity';
+import { Order } from '../../orders/entities/order.entity';
 import {
   Entity,
   Column,
@@ -33,8 +33,8 @@ export class User {
 
   // Relations
   @OneToMany(() => Order, (order) => order.admin, { cascade: true })
-  adminOrders: Order[]
+  adminOrders: Order[];
 
   @OneToMany(() => Order, (order) => order.guest, { cascade: true })
-  guestOrders: Order[]
+  guestOrders: Order[];
 }

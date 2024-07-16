@@ -19,7 +19,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "typeorm-ts-node-commonjs",
-    "migration:generate": "npx typeorm-ts-node-commonjs migration:generate ./src/migrations -d ./src/config/dataSource.ts"
+    "migration:generate": "npx typeorm-ts-node-commonjs migration:generate ./src/migrations/schema-update -d ./src/config/dataSource.ts"
   },
   "dependencies": {
     "@nestjs/cache-manager": "^2.2.2",

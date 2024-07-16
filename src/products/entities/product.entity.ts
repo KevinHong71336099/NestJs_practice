@@ -1,4 +1,4 @@
-import { LineItem } from 'src/orders/entities/lineItem.entity';
+import { LineItem } from '../../orders/entities/lineItem.entity';
 import {
   Column,
   CreateDateColumn,

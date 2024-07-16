@@ -54,6 +54,7 @@ import { LoggerMiddleware } from './global/middlewares/logger.middleware';
         username: configService.get<string>('database.username'),
         password: configService.get<string>('database.password'),
         database: configService.get<string>('database.database'),
+        migrations: ['/d/Project/nest_js_practice/src/migrations/*{.ts}'],
         synchronize: false,
         autoLoadEntities: true,
       }),
