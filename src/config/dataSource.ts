@@ -13,6 +13,6 @@ export default new DataSource({
   database: process.env.DATABASE || 'test1',
   synchronize: false,
   entities: ['../**/entities/*.entity{.ts,.js}'],
-  migrations: ['/d/Project/nest_js_practice/src/migrations/*{.ts}'],
+  migrations: ['src/migrations/*{.ts,.js}'],
   migrationsTableName: 'migration_table',
 });

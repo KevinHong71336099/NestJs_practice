@@ -8,10 +8,6 @@ import {
 import { IsProductNameAlreadyExist } from '../validator/productName.validator';
 
 export class UpdatedProductDto {
-  @IsString({ message: 'ID欄位必須是字串' })
-  @IsNotEmpty({ message: 'ID欄位不能為空' })
-  id?: string;
-
   @IsString({ message: '姓名欄位必須是字串' })
   @IsNotEmpty({ message: '姓名欄位不能為空' })
   @IsProductNameAlreadyExist()

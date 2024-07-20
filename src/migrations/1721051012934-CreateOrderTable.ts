@@ -52,7 +52,6 @@ export class CreateOrderTable1627484743301 implements MigrationInterface {
           },
         ],
       }),
-      true,
     );
 
     // Create the foreign key for adminId
