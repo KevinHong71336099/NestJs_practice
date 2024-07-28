@@ -17,7 +17,7 @@ import { User } from './entities/user.entity';
 import { CreateUserDto } from './dtos/CreateUserDto';
 import { UpdateUserDto } from './dtos/UpdateUserDto';
 import { updatedInfo } from './interfaces/updatedInfo.interface';
-import { ResponseDto } from 'src/global/dtos/response.dto';
+import { ResponseDto } from '../global/dtos/response.dto';
 import { UserDataDto } from './dtos/userData.dto';
 import { FindUserQuery } from './dtos/findUserQuery.dto';
 
@@ -36,13 +36,11 @@ export class UsersService {
     private sanitizeDataService: SanitizeDataService,
   ) {}
 
-  async findAllUsers(): Promise<ResponseDto<{ users: UserDataDto[] }>> {
+  async findAllUsers(): Promise<User[]> {
     const allUsers = await this.usersRepository.find({
       select: ['id', 'name', 'email'],
     });
-    return new ResponseDto('成功搜尋所有使用者', HttpStatus.OK, {
-      users: allUsers,
-    });
+    return allUsers;
   }
 
   async findUserById(id: string): Promise<User | null> {

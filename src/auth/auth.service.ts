@@ -2,13 +2,13 @@ import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 
 // import services
 import { JwtService } from '@nestjs/jwt';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
 
 // import DTOs
-import { UserDataDto } from 'src/users/dtos/userData.dto';
-import { ResponseDto } from 'src/global/dtos/response.dto';
+import { UserDataDto } from '../users/dtos/userData.dto';
+import { ResponseDto } from '../global/dtos/response.dto';
 import { AccessToken } from './dtos/accessToken.dto';
-import { EncryptService } from 'src/users/services/encrypt.service';
+import { EncryptService } from '../users/services/encrypt.service';
 
 @Injectable()
 export class AuthService {

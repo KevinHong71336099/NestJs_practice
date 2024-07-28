@@ -17,7 +17,7 @@ export class LoggerMiddleware implements NestMiddleware {
 
       let logMessage = '';
 
-      logMessage += `Executioin Time: ${executionTime}- Call by: ${user.id}, Method: ${method}, OriginalUrl: ${originalUrl}, StatusCode: ${statusCode}, ContentLength: ${contentLength} `;
+      logMessage += `Executioin Time: ${executionTime}- Call by: ${user?.id}, Method: ${method}, OriginalUrl: ${originalUrl}, StatusCode: ${statusCode}, ContentLength: ${contentLength} `;
 
       if (method !== 'GET') {
         logMessage += `, Body: ${JSON.stringify(req.body)}`;

@@ -7,11 +7,11 @@ import {
   Post,
   Req,
 } from '@nestjs/common';
-import { CreateOrderDto } from 'src/orders/dtos/createOrder.dto';
-import { Order } from 'src/orders/entities/order.entity';
-import { OrdersService } from 'src/orders/orders.service';
-import { ProductsService } from 'src/products/products.service';
-import { UserDataDto } from 'src/users/dtos/userData.dto';
+import { CreateOrderDto } from '../orders/dtos/createOrder.dto';
+import { Order } from '../orders/entities/order.entity';
+import { OrdersService } from '../orders/orders.service';
+import { ProductsService } from '../products/products.service';
+import { UserDataDto } from '../users/dtos/userData.dto';
 
 @Controller('guest')
 export class GuestController {

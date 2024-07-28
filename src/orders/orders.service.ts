@@ -7,11 +7,11 @@ import { CreateOrderDto } from './dtos/createOrder.dto';
 import { Order } from './entities/order.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from 'src/products/entities/product.entity';
-import { FindOptionsOrderValue, ILike, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { LineItem } from './entities/lineItem.entity';
 import { ProductInfo } from './dtos/productInfo.dto';
-import { UsersService } from 'src/users/users.service';
-import { ProductsService } from 'src/products/products.service';
+import { UsersService } from '../users/users.service';
+import { ProductsService } from '../products/products.service';
 import { UpdateOrderDto } from './dtos/updateOrder.dto';
 import { FindOrderQuery } from './dtos/findOrderQuery.dto';
 

@@ -22,27 +22,31 @@ import { UpdateUserDto } from './dtos/UpdateUserDto';
 import { ResponseDto } from 'src/global/dtos/response.dto';
 import { UserDataDto } from './dtos/userData.dto';
 import { FindUserQuery } from './dtos/findUserQuery.dto';
-import { Roles } from 'src/global/decorators/roles.decorators';
+import { Roles } from '..//global/decorators/roles.decorators';
 
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Get(':id')
+  @Roles(['admin'])
   async findOne(@Param('id') id: string): Promise<User | null> {
     return this.usersService.findUserById(id);
   }
 
   @Get()
+  @Roles(['admin'])
   async findUserByQuery(@Query() query: FindUserQuery): Promise<User[]> {
     return await this.usersService.findUserByQuery(query);
   }
 
+  /*
   @Get()
   @Roles(['admin'])
-  async findAll(): Promise<ResponseDto<{ users: UserDataDto[] }>> {
+  async findAll(): Promise<User[]> {
     return await this.usersService.findAllUsers();
   }
+  */
 
   @Post()
   async create(
