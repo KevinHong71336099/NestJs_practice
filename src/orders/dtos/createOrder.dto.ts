@@ -18,12 +18,4 @@ export class CreateOrderDto {
   @IsString()
   @IsNotEmpty()
   userId: string;
-
-  @IsString()
-  @IsNotEmpty()
-  financialStatus: string;
-
-  @IsString()
-  @IsNotEmpty()
-  fulfillmentStatus: string;
 }

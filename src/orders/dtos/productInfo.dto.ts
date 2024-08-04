@@ -1,4 +1,4 @@
 export class ProductInfo {
-    productId: string
-    stockQuantity: number
+  productId: string;
+  stockQuantity: number;
 }

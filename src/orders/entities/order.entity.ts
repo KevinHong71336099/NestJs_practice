@@ -16,10 +16,10 @@ export class Order {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ nullable: true, default: 'defaultStatus' })
   financialStatus: string;
 
-  @Column()
+  @Column({ nullable: true, default: 'defaultStatus' })
   fulfillmentStatus: string;
 
   @Column()

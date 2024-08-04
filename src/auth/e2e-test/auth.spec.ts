@@ -59,7 +59,7 @@ describe('Auth', () => {
       const response = await request(app.getHttpServer())
         .post('/auth/login')
         .send({ email: `${guest.email}`, password: '123456' })
-        .expect(200);
+        .expect(201);
 
       const userInfo = jwtService.decode(response.body.accessToken);
       console.log(userInfo);

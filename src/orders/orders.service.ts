@@ -103,7 +103,7 @@ export class OrdersService {
     role: string,
   ): Promise<Order> {
     const productInfos: ProductInfo[] = JSON.parse(createOrderDto.productInfos);
-
+    console.log(productInfos);
     // 根據 role 設定 adminId 和 guestId
     const adminId = role === 'admin' ? roleId : createOrderDto.userId;
     const guestId = role === 'admin' ? createOrderDto.userId : roleId;
@@ -126,9 +126,9 @@ export class OrdersService {
     const newOrder = await this.orderRepository.create({
       admin,
       guest,
-      financialStatus: createOrderDto.financialStatus,
-      fulfillmentStatus: createOrderDto.fulfillmentStatus,
       note: createOrderDto.note,
+      financialStatus: 'defaultStatus',
+      fulfillmentStatus: 'defaultStatus',
       lineItems: [],
     });
 
@@ -147,11 +147,10 @@ export class OrdersService {
       }),
     );
 
-    // 對每個product建立lineItemObject並與order關聯
+    /*
     for (let i = 0; i < productInfos.length; i++) {
       newOrder.lineItems.push(
         this.lineItemRepository.create({
-          orderId: newOrder.id,
           productId: productInfos[i].productId,
           name: productsInOrder[i].name,
           price: productsInOrder[i].sellPrice,
@@ -161,6 +160,20 @@ export class OrdersService {
         }),
       );
     }
+      */
+
+    // 創建 LineItems 並添加到 order
+    newOrder.lineItems = productInfos.map((productInfo, index) =>
+      this.lineItemRepository.create({
+        productId: productInfo.productId,
+        name: productsInOrder[index].name,
+        price: productsInOrder[index].sellPrice,
+        quantity: productInfo.stockQuantity,
+        product: productsInOrder[index],
+      }),
+    );
+
+    console.log(newOrder);
 
     // 保存order
     return await this.orderRepository.save(newOrder);
