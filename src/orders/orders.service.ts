@@ -14,6 +14,7 @@ import { UsersService } from '../users/users.service';
 import { ProductsService } from '../products/products.service';
 import { UpdateOrderDto } from './dtos/updateOrder.dto';
 import { FindOrderQuery } from './dtos/findOrderQuery.dto';
+import { NodemailerService } from 'src/third-party/services/nodemailer.service';
 
 @Injectable()
 export class OrdersService {
@@ -23,6 +24,7 @@ export class OrdersService {
     private lineItemRepository: Repository<LineItem>,
     private usersService: UsersService,
     private productsService: ProductsService,
+    private nodemailerService: NodemailerService,
   ) {}
 
   async findOrderByQuery(
@@ -103,7 +105,7 @@ export class OrdersService {
     role: string,
   ): Promise<Order> {
     const productInfos: ProductInfo[] = JSON.parse(createOrderDto.productInfos);
-    console.log(productInfos);
+
     // 根據 role 設定 adminId 和 guestId
     const adminId = role === 'admin' ? roleId : createOrderDto.userId;
     const guestId = role === 'admin' ? createOrderDto.userId : roleId;
@@ -147,21 +149,6 @@ export class OrdersService {
       }),
     );
 
-    /*
-    for (let i = 0; i < productInfos.length; i++) {
-      newOrder.lineItems.push(
-        this.lineItemRepository.create({
-          productId: productInfos[i].productId,
-          name: productsInOrder[i].name,
-          price: productsInOrder[i].sellPrice,
-          quantity: productInfos[i].stockQuantity,
-          order: newOrder,
-          product: productsInOrder[i],
-        }),
-      );
-    }
-      */
-
     // 創建 LineItems 並添加到 order
     newOrder.lineItems = productInfos.map((productInfo, index) =>
       this.lineItemRepository.create({
@@ -173,10 +160,17 @@ export class OrdersService {
       }),
     );
 
-    console.log(newOrder);
-
     // 保存order
-    return await this.orderRepository.save(newOrder);
+    const order = await this.orderRepository.save(newOrder);
+
+    // nodemailer task push into queue
+    await this.nodemailerService.addSendingTask({
+      userEmail: guest.email,
+      userName: guest.name,
+      orderId: order.id,
+    });
+
+    return order;
   }
 
   async updateOrder(

@@ -24,6 +24,7 @@ import { RolesGuard } from './global/guards/roles.guard';
 import { GuestModule } from './guest/guest.module';
 import { OrdersModule } from './orders/orders.module';
 import { LoggerMiddleware } from './global/middlewares/logger.middleware';
+import { ThirdPartyModule } from './third-party/third-party.module';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { LoggerMiddleware } from './global/middlewares/logger.middleware';
     ProductsModule,
     GuestModule,
     OrdersModule,
+    ThirdPartyModule,
   ],
   controllers: [AppController],
   providers: [
