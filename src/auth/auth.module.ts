@@ -10,9 +10,12 @@ import { AuthService } from './auth.service';
 import { LocalStrategy } from './local.strategy';
 import { JwtStrategy } from './jwt.strategy';
 import { UsersModule } from '../users/users.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { LoginToken } from './entities/loginToken.entity';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([LoginToken]),
     UsersModule,
     PassportModule,
     ConfigModule,
@@ -26,6 +29,6 @@ import { UsersModule } from '../users/users.module';
     }),
   ],
   providers: [UsersService, AuthService, LocalStrategy, JwtStrategy],
-  exports: [AuthService, JwtModule],
+  exports: [AuthService, JwtModule, TypeOrmModule],
 })
 export class AuthModule {}

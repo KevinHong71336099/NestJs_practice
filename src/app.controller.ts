@@ -1,6 +1,5 @@
 import {
   Controller,
-  HttpStatus,
   Post,
   Req,
   UseGuards,
@@ -13,11 +12,13 @@ import { UserDataDto } from './users/dtos/userData.dto';
 import { ResponseDto } from './global/dtos/response.dto';
 import { JwtRevokeInterceptor } from './auth/interceptors/jwtRevoke.interceptor';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { LoginJWTInterceptor } from './auth/interceptors/loginJWT.interceptor';
 
 @Controller()
 export class AppController {
   constructor(private authService: AuthService) {}
   @UseGuards(LocalAuthGuard)
+  @UseInterceptors(LoginJWTInterceptor)
   @Post('auth/login')
   async login(@Req() req: Request) {
     const user = req.user as UserDataDto;

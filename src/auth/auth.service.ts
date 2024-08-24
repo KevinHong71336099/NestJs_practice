@@ -10,12 +10,18 @@ import { ResponseDto } from '../global/dtos/response.dto';
 import { AccessToken } from './dtos/accessToken.dto';
 import { EncryptService } from '../users/services/encrypt.service';
 
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { LoginToken } from './entities/loginToken.entity';
+
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private encryptService: EncryptService,
     private jwtService: JwtService,
+    @InjectRepository(LoginToken)
+    private loginTokenRepository: Repository<LoginToken>,
   ) {}
 
   async validateUser(email: string, pwd: string): Promise<UserDataDto | null> {
@@ -48,5 +54,23 @@ export class AuthService {
 
   logout(): ResponseDto<[]> {
     return new ResponseDto('使用者成功登出', HttpStatus.OK, []);
+  }
+
+  async saveOrUpdateToken(userId: string, token: string): Promise<void> {
+    const existingToken = await this.loginTokenRepository.findOne({
+      where: { userId },
+    });
+
+    if (existingToken) {
+      // 如果存在該 userId，則更新 token
+      await this.loginTokenRepository.update(existingToken.id, { token });
+    } else {
+      // 如果不存在該 userId，則創建新的記錄
+      const newLoginToken = this.loginTokenRepository.create({
+        userId,
+        token,
+      });
+      await this.loginTokenRepository.save(newLoginToken);
+    }
   }
 }

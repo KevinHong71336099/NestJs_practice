@@ -53,6 +53,7 @@ export class GuestController {
     @Body('stockQuantity') stockQuantity: number,
   ): Promise<string> {
     const guest = req.user as UserDataDto;
+    console.log(req);
     return await this.productsService.addToCart(guest.id, id, stockQuantity);
   }
 

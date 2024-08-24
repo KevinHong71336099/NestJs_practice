@@ -7,7 +7,7 @@ let database;
 if (process.env.NODE_ENV === 'production') {
   database = 'production';
 } else if (process.env.NODE_ENV === 'development') {
-  database = 'test';
+  database = 'test1';
 } else {
   database = 'testing';
 }

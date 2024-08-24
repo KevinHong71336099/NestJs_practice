@@ -36,6 +36,7 @@ import { ThirdPartyModule } from './third-party/third-party.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
+        ttl: 3600,
         store: (): any =>
           redisStore({
             socket: {
@@ -56,7 +57,7 @@ import { ThirdPartyModule } from './third-party/third-party.module';
         password: configService.get<string>('database.password'),
         database: configService.get<string>('database.database'),
         migrations: ['/d/Project/nest_js_practice/src/migrations/*{.ts}'],
-        synchronize: false,
+        synchronize: true,
         autoLoadEntities: true,
       }),
     }),
