@@ -25,6 +25,8 @@ import { GuestModule } from './guest/guest.module';
 import { OrdersModule } from './orders/orders.module';
 import { LoggerMiddleware } from './global/middlewares/logger.middleware';
 import { ThirdPartyModule } from './third-party/third-party.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import eventEmitterConfig from './config/eventEmitter.config';
 
 @Module({
   imports: [
@@ -67,6 +69,7 @@ import { ThirdPartyModule } from './third-party/third-party.module';
     GuestModule,
     OrdersModule,
     ThirdPartyModule,
+    EventEmitterModule.forRoot(eventEmitterConfig),
   ],
   controllers: [AppController],
   providers: [

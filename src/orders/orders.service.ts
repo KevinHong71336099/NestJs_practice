@@ -14,7 +14,8 @@ import { UsersService } from '../users/users.service';
 import { ProductsService } from '../products/products.service';
 import { UpdateOrderDto } from './dtos/updateOrder.dto';
 import { FindOrderQuery } from './dtos/findOrderQuery.dto';
-import { NodemailerService } from 'src/third-party/services/nodemailer.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EmailInfos } from './dtos/emailInfos.dto';
 
 @Injectable()
 export class OrdersService {
@@ -24,7 +25,7 @@ export class OrdersService {
     private lineItemRepository: Repository<LineItem>,
     private usersService: UsersService,
     private productsService: ProductsService,
-    private nodemailerService: NodemailerService,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   async findOrderByQuery(
@@ -163,12 +164,11 @@ export class OrdersService {
     // 保存order
     const order = await this.orderRepository.save(newOrder);
 
-    // nodemailer task push into queue
-    await this.nodemailerService.addSendingTask({
-      userEmail: guest.email,
-      userName: guest.name,
-      orderId: order.id,
-    });
+    // Emit event
+    this.eventEmitter.emit(
+      'email.sending',
+      new EmailInfos(guest.email, guest.name, order.id),
+    );
 
     return order;
   }

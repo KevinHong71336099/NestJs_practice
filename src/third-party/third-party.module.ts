@@ -3,6 +3,7 @@ import { NodemailerService } from './services/nodemailer.service';
 import { BullModule } from '@nestjs/bullmq';
 import { ConfigModule } from '@nestjs/config';
 import { NodemailerConsumer } from './processors/nodemailer.consumer';
+import { EmailListener } from './listeners/email.listener';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { NodemailerConsumer } from './processors/nodemailer.consumer';
     }),
     ConfigModule.forRoot(),
   ],
-  providers: [NodemailerService, NodemailerConsumer],
+  providers: [NodemailerService, NodemailerConsumer, EmailListener],
   exports: [NodemailerService],
 })
 export class ThirdPartyModule {}
